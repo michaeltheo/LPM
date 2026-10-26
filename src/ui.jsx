@@ -20,6 +20,11 @@ export function Kicker({ className = '', children }) {
   return <p className={`font-mono text-xs tracking-[0.2em] uppercase sm:text-sm ${className}`}>[ {children} ]</p>
 }
 
+// torn top edge in the section's own colour; the section must be `relative` and not clip y
+export function Tear() {
+  return <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-full h-3 translate-y-px bg-inherit tear sm:h-5" />
+}
+
 // text running round a circle, stretched to close the loop exactly
 export function RingText({ text, size = 9, r = 41 }) {
   const id = useId()
@@ -58,7 +63,7 @@ const CUTS = [
 ]
 const TILT = [-4, 3, -2, 5, -3, 2, -5, 4, -1]
 
-// ransom-note headline: every letter cut from a different page
+// ransom-note headline: every letter cut from a different page, pasted down one at a time
 export function Ransom({ text, className = '' }) {
   return (
     <span className={`inline-flex flex-wrap gap-x-[0.3em] gap-y-2 ${className}`}>
@@ -68,9 +73,16 @@ export function Ransom({ text, className = '' }) {
           {[...word].map((c, i) => {
             const k = w * 5 + i
             return (
-              <span key={i} className={`inline-block px-[0.12em] leading-[1.15] uppercase ${CUTS[(k * 3) % CUTS.length]}`} style={{ rotate: `${TILT[k % TILT.length]}deg` }}>
+              <m.span
+                key={i}
+                className={`inline-block px-[0.12em] leading-[1.15] uppercase ${CUTS[(k * 3) % CUTS.length]}`}
+                initial={{ opacity: 0, y: '-0.5em', scale: 1.6, rotate: 0 }}
+                whileInView={{ opacity: 1, y: '0em', scale: 1, rotate: TILT[k % TILT.length] }}
+                viewport={{ once: true }}
+                transition={{ type: 'spring', stiffness: 320, damping: 18, delay: 0.2 + k * 0.06 }}
+              >
                 {c}
-              </span>
+              </m.span>
             )
           })}
         </span>

@@ -55,6 +55,9 @@ export default function Rsvp() {
       <div className="flex flex-wrap justify-between gap-2 px-4 py-5 font-mono text-[0.65rem] tracking-[0.2em] text-white/60 uppercase sm:px-8 sm:text-xs">
         <span>Studio 54 · lpm’s birthday</span>
         <span>[11.13.2026] · Thessaloniki</span>
+        <a href="https://mt-webstudio.gr" target="_blank" rel="noreferrer" className="w-full text-center transition-colors hover:text-white sm:w-auto">
+          Development · mt-webstudio.gr ↗
+        </a>
       </div>
     </footer>
   )

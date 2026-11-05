@@ -1,4 +1,4 @@
-import { LazyMotion, MotionConfig, domAnimation, m, useScroll } from 'motion/react'
+import { m, useScroll } from 'motion/react'
 import { useEffect, useState } from 'react'
 import Countdown from './sections/Countdown.jsx'
 import DressCode from './sections/DressCode.jsx'
@@ -59,31 +59,28 @@ function Tapes({ seam, a, b }) {
 
 export default function App() {
   return (
-    <LazyMotion features={domAnimation} strict>
-      <MotionConfig reducedMotion="user">
-        <IssueBar />
-        <Opener />
-        <main>
-          <Invite />
-          <Countdown />
-          <Program />
-          <DressCode />
-          <Tapes
-            seam="bg-linear-to-b from-blush from-50% to-ink to-50%"
-            a={['pick your alter ego · ', 'bg-ink text-white']}
-            b={['her · him · beauty · the night · ', 'bg-pink text-ink']}
-          />
-          <Moodboards />
-          <HouseRules />
-          <Tapes
-            seam="bg-linear-to-b from-white from-50% to-ink to-50%"
-            a={['rsvp by nov 5 · ', 'bg-red text-white']}
-            b={['the doorman wants to know · ', 'bg-paper text-ink']}
-          />
-        </main>
-        <Rsvp />
-        <div aria-hidden className="pointer-events-none fixed -inset-[10%] z-50 grain opacity-[0.09] motion-safe:animate-[grain_1s_steps(5)_infinite]" />
-      </MotionConfig>
-    </LazyMotion>
+    <>
+      <IssueBar />
+      <Opener />
+      <main>
+        <Invite />
+        <Countdown />
+        <Program />
+        <DressCode />
+        <Tapes
+          seam="bg-linear-to-b from-blush from-50% to-ink to-50%"
+          a={['pick your alter ego · ', 'bg-ink text-white']}
+          b={['her · him · beauty · the night · ', 'bg-pink text-ink']}
+        />
+        <Moodboards />
+        <HouseRules />
+        <Tapes
+          seam="bg-linear-to-b from-white from-50% to-ink to-50%"
+          a={['rsvp now · ', 'bg-red text-white']}
+          b={['the doorman wants to know · ', 'bg-paper text-ink']}
+        />
+      </main>
+      <Rsvp />
+    </>
   )
 }

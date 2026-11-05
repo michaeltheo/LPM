@@ -14,7 +14,7 @@ const PHOTOS = [
   [basquiat, 'rotate-6 translate-y-4 sm:-translate-y-2'],
 ]
 
-const TAGS = ['Friday the 13th', '7 pm → late', 'Veroias 4 · Thessaloniki', 'Dress code: Studio 54', 'BYOB', 'RSVP by Nov 5']
+const TAGS = ['Friday the 13th', '7 pm → late', 'Veroias 4 · Thessaloniki', 'Dress code: Studio 54', 'BYOB', 'RSVP online']
 
 // the grey case-study card: photo row, bold/regular title, bracketed mono date, tag chips
 export default function Invite() {
@@ -27,7 +27,7 @@ export default function Invite() {
         <div className="flex gap-4 font-bold sm:gap-8">
           <a href="#program" className="hover:underline">Program</a>
           <a href="#dress-code" className="hover:underline">Dress code</a>
-          <a href="#rsvp" className="hover:underline">RSVP</a>
+          <a href="/rsvp" className="hover:underline">RSVP</a>
         </div>
       </nav>
 

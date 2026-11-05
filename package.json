@@ -8,9 +8,13 @@
     "build": "vite build",
     "lint": "eslint .",
     "test": "node --test",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
+    "@prisma/adapter-neon": "^7.10.1",
+    "@prisma/client": "^7.10.1",
     "motion": "^14.6.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
@@ -25,6 +29,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",
     "globals": "^17.13.0",
+    "prisma": "7.10.1",
     "tailwindcss": "^4.3.3",
     "vite": "^8.3.4"
   }

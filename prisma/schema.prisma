@@ -1,0 +1,17 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Reservation {
+  id        Int      @id @default(autoincrement())
+  name      String
+  phone     String   @unique // normalized digits, so a repeat rsvp updates the same row
+  plusOne   Boolean  @default(false)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

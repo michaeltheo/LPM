@@ -19,7 +19,6 @@ export default function Rsvp() {
           <m.img style={{ x: left }} src={mj} alt="" loading="lazy" className="size-full scale-125 object-cover object-[50%_30%] grayscale brightness-[.55] contrast-125" />
           <m.img style={{ x: right }} src={basquiat} alt="" loading="lazy" className="size-full scale-125 object-cover object-[50%_30%] grayscale brightness-[.55] contrast-125" />
         </div>
-        {/* shortcut: rsvp is text only, add the form or link here once the backend exists */}
         <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
           <Kicker className="text-white/80">07 · the doorman wants to know</Kicker>
           <h2
@@ -41,15 +40,16 @@ export default function Rsvp() {
               </m.span>
             ))}
           </h2>
-          <m.p
-            className="font-condensed text-4xl uppercase fringe sm:text-6xl"
+          <m.a
+            href="/rsvp"
+            className="mt-2 inline-block -rotate-2 bg-pink px-8 py-3 font-condensed text-3xl text-ink uppercase shadow-[6px_6px_0_var(--color-white)] transition-[rotate,box-shadow,translate] hover:rotate-0 hover:shadow-[2px_2px_0_var(--color-white)] hover:translate-x-1 hover:translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:px-12 sm:text-5xl"
             initial={{ opacity: 0, scale: 1.4 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.5 }}
           >
-            by Nov 5
-          </m.p>
+            get on the list →
+          </m.a>
         </div>
       </div>
       <div className="flex flex-wrap justify-between gap-2 px-4 py-5 font-mono text-[0.65rem] tracking-[0.2em] text-white/60 uppercase sm:px-8 sm:text-xs">

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { PARTY_START, timeLeft } from './countdown.js'
+import { PARTY_START, RSVP_CLOSES, timeLeft } from './countdown.js'
 
 test('party starts Friday 13 Nov 2026, 17:00 UTC', () => {
   const d = new Date(PARTY_START)
@@ -15,4 +15,9 @@ test('splits the remaining time into units', () => {
 
 test('stops at zero once the party has started', () => {
   assert.deepEqual(timeLeft(PARTY_START + 1000), { days: 0, hours: 0, minutes: 0, seconds: 0, done: true })
+})
+
+test('rsvp closes at midnight after Nov 10, Thessaloniki time', () => {
+  assert.equal(new Date(RSVP_CLOSES).toISOString(), '2026-11-10T22:00:00.000Z')
+  assert.ok(RSVP_CLOSES < PARTY_START)
 })

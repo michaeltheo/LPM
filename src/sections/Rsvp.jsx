@@ -1,7 +1,8 @@
 import { m, useScroll, useTransform } from 'motion/react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import mj from '../assets/scene/02.jpg'
 import basquiat from '../assets/scene/03.jpg'
+import { RSVP_CLOSES } from '../countdown.js'
 import { Kicker } from '../ui.jsx'
 
 // the closing "THANKS" banner, turned into the rsvp
@@ -10,6 +11,8 @@ export default function Rsvp() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end end'] })
   const left = useTransform(scrollYProgress, [0, 1], ['-12%', '0%'])
   const right = useTransform(scrollYProgress, [0, 1], ['12%', '0%'])
+  // shortcut: checked on page load, a tab left open past midnight still shows the button (the server refuses anyway)
+  const [closed] = useState(() => Date.now() >= RSVP_CLOSES)
 
   return (
     <footer ref={ref} id="rsvp" data-section="07 · RSVP" className="relative bg-ink">
@@ -41,14 +44,15 @@ export default function Rsvp() {
             ))}
           </h2>
           <m.a
-            href="/rsvp"
-            className="mt-2 inline-block -rotate-2 bg-pink px-8 py-3 font-condensed text-3xl text-ink uppercase shadow-[6px_6px_0_var(--color-white)] transition-[rotate,box-shadow,translate] hover:rotate-0 hover:shadow-[2px_2px_0_var(--color-white)] hover:translate-x-1 hover:translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:px-12 sm:text-5xl"
+            href={closed ? undefined : '/rsvp'}
+            aria-disabled={closed || undefined}
+            className={`mt-2 inline-block -rotate-2 ${closed ? 'pointer-events-none border-2 border-white/60 text-white/70 line-through decoration-pink' : 'bg-pink text-ink'} px-8 py-3 font-condensed text-3xl uppercase shadow-[6px_6px_0_var(--color-white)] transition-[rotate,box-shadow,translate] hover:rotate-0 hover:shadow-[2px_2px_0_var(--color-white)] hover:translate-x-1 hover:translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:px-12 sm:text-5xl`}
             initial={{ opacity: 0, scale: 1.4 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.5 }}
           >
-            get on the list →
+            {closed ? 'the list is closed' : 'get on the list →'}
           </m.a>
         </div>
       </div>

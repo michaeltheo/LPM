@@ -1,6 +1,9 @@
 // Friday, Nov 13 2026, 7 pm in Thessaloniki (EET, UTC+2)
 export const PARTY_START = Date.parse('2026-11-13T19:00:00+02:00')
 
+// rsvp open through the whole of Tuesday, Nov 10 in Thessaloniki
+export const RSVP_CLOSES = Date.parse('2026-11-11T00:00:00+02:00')
+
 export function timeLeft(now, target = PARTY_START) {
   const ms = Math.max(0, target - now)
   return {

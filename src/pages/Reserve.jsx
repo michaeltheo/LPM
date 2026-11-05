@@ -1,5 +1,6 @@
 import { AnimatePresence, m } from 'motion/react'
 import { useState } from 'react'
+import { RSVP_CLOSES } from '../countdown.js'
 import { Kicker } from '../ui.jsx'
 
 const field = 'w-full border-b-2 border-ink bg-transparent pb-1 font-condensed text-3xl uppercase placeholder:text-ink/25 focus:border-pink focus:outline-none sm:text-4xl'
@@ -33,7 +34,7 @@ function Label({ htmlFor, children }) {
 
 export default function Reserve() {
   const [form, setForm] = useState({ name: '', phone: '', plusOne: false, notes: '' })
-  const [state, setState] = useState({ status: 'idle', error: '' })
+  const [state, setState] = useState(() => ({ status: Date.now() >= RSVP_CLOSES ? 'closed' : 'idle', error: '' }))
   const set = (k) => (v) => setForm((f) => ({ ...f, [k]: v?.target ? v.target.value : v }))
 
   async function submit(e) {
@@ -42,6 +43,7 @@ export default function Reserve() {
     try {
       const res = await fetch('/api/rsvp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) })
       const body = await res.json().catch(() => ({}))
+      if (res.status === 403) return setState({ status: 'closed', error: '' })
       if (!res.ok) return setState({ status: 'idle', error: body.error ?? 'something went wrong, try again' })
       setState({ status: 'done', error: '' })
     } catch {
@@ -72,7 +74,19 @@ export default function Reserve() {
       >
         <div aria-hidden className="absolute -top-3 left-1/2 h-6 w-28 -translate-x-1/2 rotate-2 bg-white/70" />
         <AnimatePresence mode="wait">
-          {state.status === 'done' ? (
+          {state.status === 'closed' ? (
+            <m.div key="closed" className="py-10 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <m.p
+                className="mx-auto inline-block border-4 border-ink px-6 py-3 font-condensed text-5xl uppercase sm:text-6xl"
+                initial={{ scale: 2.4, rotate: 0, opacity: 0 }}
+                animate={{ scale: 1, rotate: 5, opacity: 1 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 14 }}
+              >
+                the list is closed
+              </m.p>
+              <p className="mt-8 font-marker text-2xl">rsvps closed on nov 10. the doorman has his list.</p>
+            </m.div>
+          ) : state.status === 'done' ? (
             <m.div key="done" className="py-10 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <m.p
                 className="mx-auto inline-block border-4 border-pink px-6 py-3 font-condensed text-5xl text-pink uppercase sm:text-6xl"
@@ -93,6 +107,7 @@ export default function Reserve() {
                 <h2 className="-rotate-3 font-marker text-3xl sm:text-4xl">guest list</h2>
                 <p aria-hidden className="font-marker text-5xl leading-none">54</p>
               </div>
+              <p className="-mt-6 font-mono text-xs tracking-[0.2em] text-pink uppercase">[ list closes nov 10 ]</p>
 
               <div className="space-y-2">
                 <Label htmlFor="name">your name</Label>

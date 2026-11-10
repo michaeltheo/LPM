@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     }
     if (req.method === 'POST') {
       if (Date.now() < PHOTOS_OPEN) return res.status(403).json({ error: 'the camera roll opens when the party starts' })
-      const { data, error } = parsePhoto(req.body, process.env.VITE_CLOUDINARY_CLOUD)
+      const { data, error } = parsePhoto(req.body, process.env.CLOUDINARY_CLOUD)
       if (error) return res.status(400).json({ error })
       await prisma.photo.upsert({ where: { url: data.url }, create: data, update: {} })
       return res.status(200).json({ ok: true })

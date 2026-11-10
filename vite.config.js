@@ -1,6 +1,6 @@
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 
 // dev only: serve api/*.js like vercel does, so `pnpm dev` works without `vercel dev`
 function vercelApi() {
@@ -42,6 +42,14 @@ function vercelApi() {
 }
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [react(), tailwindcss(), vercelApi()],
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+  return {
+    plugins: [react(), tailwindcss(), vercelApi()],
+    // only these two reach the browser, both are public by design (cloud name + unsigned preset)
+    define: {
+      'import.meta.env.CLOUDINARY_CLOUD': JSON.stringify(env.CLOUDINARY_CLOUD),
+      'import.meta.env.CLOUDINARY_PRESET': JSON.stringify(env.CLOUDINARY_PRESET),
+    },
+  }
 })

@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { PHOTOS_OPEN } from '../countdown.js'
 import { Kicker } from '../ui.jsx'
 
-const CLOUD = import.meta.env.VITE_CLOUDINARY_CLOUD
-const PRESET = import.meta.env.VITE_CLOUDINARY_PRESET
+const CLOUD = import.meta.env.CLOUDINARY_CLOUD
+const PRESET = import.meta.env.CLOUDINARY_PRESET
 const thumb = (url) => url.replace('/upload/', '/upload/w_600,c_limit,f_auto,q_auto/')
 
 // phone photos are 3-5 MB; a 1600px jpeg is ~300 KB and keeps the whole night inside the free tier

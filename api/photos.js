@@ -6,7 +6,9 @@ import { parsePhoto } from './_lib/validate.js'
 
 // GET: the gallery (staff with the password also get hidden ones) · POST: a guest adds a photo · PATCH: staff hide/unhide
 export default async function handler(req, res) {
-  res.setHeader('Cache-Control', 'no-store')
+  // the public gallery is cached at the edge, so 100 phones polling cost ~1 function run per 30s, not 100
+  const cached = req.method === 'GET' && !req.url.includes('all=1')
+  res.setHeader('Cache-Control', cached ? 'public, max-age=0, s-maxage=30, stale-while-revalidate=60' : 'no-store')
   const pw = req.headers['x-admin-password']
   const admin = isAdmin(pw)
   if ((pw !== undefined || req.method === 'PATCH') && !admin) {
@@ -15,6 +17,8 @@ export default async function handler(req, res) {
   }
   try {
     if (req.method === 'GET') {
+      // admin reads ?all=1 so it never gets the cached public copy
+      if (!cached && !admin) return res.status(401).json({ error: 'wrong password' })
       if (!admin && Date.now() < PHOTOS_OPEN) return res.status(200).json({ photos: [] })
       const photos = await prisma.photo.findMany({
         where: admin ? {} : { hidden: false },

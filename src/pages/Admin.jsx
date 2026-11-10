@@ -121,7 +121,7 @@ function Photos({ password }) {
   const headers = { 'x-admin-password': password, 'Content-Type': 'application/json' }
 
   useEffect(() => {
-    fetch('/api/photos', { headers: { 'x-admin-password': password } })
+    fetch('/api/photos?all=1', { headers: { 'x-admin-password': password } })
       .then((r) => r.json())
       .then((b) => setPhotos(b.photos ?? []))
       .catch(() => setPhotos([]))

@@ -26,6 +26,7 @@ async function upload(file) {
   const { secure_url } = await up.json()
   const res = await fetch('/api/photos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: secure_url }) })
   if (!res.ok) throw new Error('api refused')
+  return secure_url
 }
 
 // the night's camera roll: locked until the doors open, then everyone drops their shots in
@@ -34,23 +35,30 @@ export default function Photos() {
   const [open] = useState(() => Date.now() >= PHOTOS_OPEN)
   const [photos, setPhotos] = useState([])
   const [status, setStatus] = useState({ busy: false, msg: '' })
-  const [tick, setTick] = useState(0)
+  // your own uploads show at once; the shared list is edge-cached and can lag ~30s behind
+  const [mine, setMine] = useState([])
 
   useEffect(() => {
     if (!open) return
     let live = true
     const load = () =>
+      document.visibilityState === 'visible' &&
       fetch('/api/photos')
         .then((r) => r.json())
         .then((b) => live && setPhotos(b.photos ?? []))
         .catch(() => {})
     load()
-    const t = setInterval(load, 30_000)
+    // phones in pockets don't poll; coming back to the tab refreshes straight away
+    const t = setInterval(load, 60_000)
+    document.addEventListener('visibilitychange', load)
     return () => {
       live = false
       clearInterval(t)
+      document.removeEventListener('visibilitychange', load)
     }
-  }, [open, tick])
+  }, [open])
+
+  const shown = [...mine.filter((url) => !photos.some((p) => p.url === url)).map((url) => ({ url })), ...photos]
 
   async function pick(e) {
     const files = [...e.target.files].slice(0, 20)
@@ -59,7 +67,8 @@ export default function Photos() {
     for (const [i, f] of files.entries()) {
       setStatus({ busy: true, msg: `uploading ${i + 1} / ${files.length}…` })
       try {
-        await upload(f)
+        const url = await upload(f)
+        setMine((m) => [url, ...m])
         done++
       } catch (err) {
         console.error(err)
@@ -67,7 +76,6 @@ export default function Photos() {
     }
     const failed = files.length - done
     setStatus({ busy: false, msg: failed ? `${done} in, ${failed} didn’t make it, try those again` : `${done} in the roll ✓` })
-    setTick((t) => t + 1)
   }
 
   return (
@@ -97,13 +105,13 @@ export default function Photos() {
             </p>
 
             <div className="mt-8 columns-2 gap-3 sm:columns-3">
-              {photos.map((p) => (
-                <a key={p.id} href={p.url} target="_blank" rel="noreferrer" className="mb-3 block break-inside-avoid">
+              {shown.map((p) => (
+                <a key={p.url} href={p.url} target="_blank" rel="noreferrer" className="mb-3 block break-inside-avoid">
                   <img src={thumb(p.url)} alt="a photo from the party" loading="lazy" className="w-full" />
                 </a>
               ))}
             </div>
-            {!photos.length && <p className="mt-4 font-marker text-2xl text-white/70">no shots yet. be the first.</p>}
+            {!shown.length && <p className="mt-4 font-marker text-2xl text-white/70">no shots yet. be the first.</p>}
           </>
         )}
       </div>

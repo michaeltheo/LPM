@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/rsvp", "destination": "/index.html" },
-    { "source": "/admin", "destination": "/index.html" }
+    { "source": "/admin", "destination": "/index.html" },
+    { "source": "/photos", "destination": "/index.html" }
   ]
 }

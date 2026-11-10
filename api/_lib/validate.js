@@ -12,3 +12,10 @@ export function parseRsvp(body) {
 
   return { data: { name, phone, plusOne: b.plusOne === true, notes: notes || null } }
 }
+
+// only images that landed in our own cloudinary account, so nobody can post links to anything else
+export function parsePhoto(body, cloud) {
+  const url = body && typeof body.url === 'string' ? body.url : ''
+  const ok = !!cloud && url.length <= 300 && url.startsWith(`https://res.cloudinary.com/${cloud}/image/upload/`)
+  return ok ? { data: { url } } : { error: 'that photo did not make it, try again' }
+}

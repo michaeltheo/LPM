@@ -1,18 +1,11 @@
-import { timingSafeEqual } from 'node:crypto'
 import { setTimeout as sleep } from 'node:timers/promises'
+import { isAdmin } from './_lib/admin.js'
 import { prisma } from './_lib/db.js'
-
-const ok = (pw) => {
-  const want = Buffer.from(process.env.ADMIN_PASSWORD ?? '')
-  const got = Buffer.from(String(pw ?? ''))
-  // refuses everyone if the env password is missing or too short
-  return want.length >= 8 && got.length === want.length && timingSafeEqual(got, want)
-}
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'method not allowed' })
   res.setHeader('Cache-Control', 'no-store')
-  if (!ok(req.headers['x-admin-password'])) {
+  if (!isAdmin(req.headers['x-admin-password'])) {
     await sleep(1500)
     return res.status(401).json({ error: 'wrong password' })
   }

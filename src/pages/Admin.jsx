@@ -1,5 +1,5 @@
 import { m } from 'motion/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Kicker } from '../ui.jsx'
 
 // the door: a password checked by the server, never stored in the page
@@ -13,7 +13,7 @@ function Door({ onOpen }) {
     try {
       const res = await fetch('/api/guests', { headers: { 'x-admin-password': password } })
       const body = await res.json().catch(() => ({}))
-      if (res.ok) return onOpen(body.guests)
+      if (res.ok) return onOpen({ guests: body.guests, password })
       setState({ busy: false, error: body.error ?? 'something went wrong' })
     } catch {
       setState({ busy: false, error: 'no signal, try again' })
@@ -115,15 +115,62 @@ function List({ guests }) {
   )
 }
 
+// every guest upload, with a switch to pull it from the public gallery
+function Photos({ password }) {
+  const [photos, setPhotos] = useState(null)
+  const headers = { 'x-admin-password': password, 'Content-Type': 'application/json' }
+
+  useEffect(() => {
+    fetch('/api/photos', { headers: { 'x-admin-password': password } })
+      .then((r) => r.json())
+      .then((b) => setPhotos(b.photos ?? []))
+      .catch(() => setPhotos([]))
+  }, [password])
+
+  async function toggle(p) {
+    const res = await fetch('/api/photos', { method: 'PATCH', headers, body: JSON.stringify({ id: p.id, hidden: !p.hidden }) })
+    if (res.ok) setPhotos((ps) => ps.map((x) => (x.id === p.id ? { ...x, hidden: !p.hidden } : x)))
+  }
+
+  if (!photos) return null
+  return (
+    <div className="mx-auto mt-16 max-w-5xl">
+      <Kicker className="text-white/80">camera roll · {photos.length} photos · {photos.filter((p) => p.hidden).length} hidden</Kicker>
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {photos.map((p) => (
+          <div key={p.id} className="relative">
+            <img src={p.url.replace('/upload/', '/upload/w_400,c_limit,f_auto,q_auto/')} alt="" loading="lazy" className={`aspect-square w-full object-cover ${p.hidden ? 'opacity-30 grayscale' : ''}`} />
+            <button
+              type="button"
+              onClick={() => toggle(p)}
+              className={`absolute right-2 bottom-2 px-3 py-1 font-mono text-xs tracking-wider uppercase ${p.hidden ? 'bg-white text-ink' : 'bg-red text-white'}`}
+            >
+              {p.hidden ? 'show' : 'hide'}
+            </button>
+          </div>
+        ))}
+      </div>
+      {!photos.length && <p className="mt-4 font-marker text-2xl text-white/70">no photos yet.</p>}
+    </div>
+  )
+}
+
 export default function Admin() {
-  const [guests, setGuests] = useState(null)
+  const [session, setSession] = useState(null)
   return (
     <div className="min-h-svh bg-ink px-4 pt-6 pb-20 text-white sm:px-8">
       <div className="flex justify-between font-mono text-[0.65rem] tracking-[0.2em] text-white/70 uppercase sm:text-xs">
         <a href="/" className="transition-colors hover:text-white">← back to the invite</a>
         <span>[ Studio 54 · LPM · staff ]</span>
       </div>
-      {guests ? <List guests={guests} /> : <Door onOpen={setGuests} />}
+      {session ? (
+        <>
+          <List guests={session.guests} />
+          <Photos password={session.password} />
+        </>
+      ) : (
+        <Door onOpen={setSession} />
+      )}
     </div>
   )
 }

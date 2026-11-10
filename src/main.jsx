@@ -4,10 +4,11 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import Admin from './pages/Admin.jsx'
+import Photos from './pages/Photos.jsx'
 import Reserve from './pages/Reserve.jsx'
 
-// three pages don't need a router; vercel.json rewrites these paths to index.html
-const Page = { '/rsvp': Reserve, '/admin': Admin }[location.pathname.replace(/\/$/, '')] ?? App
+// four pages don't need a router; vercel.json rewrites these paths to index.html
+const Page = { '/rsvp': Reserve, '/admin': Admin, '/photos': Photos }[location.pathname.replace(/\/$/, '')] ?? App
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

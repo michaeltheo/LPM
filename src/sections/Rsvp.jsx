@@ -54,6 +54,9 @@ export default function Rsvp() {
           >
             {closed ? 'the list is closed' : 'get on the list →'}
           </m.a>
+          <a href="/photos" className="mt-8 font-mono text-sm tracking-[0.2em] text-white uppercase underline decoration-pink decoration-2 underline-offset-4 transition-colors hover:text-pink">
+            [ camera roll · see & drop photos → ]
+          </a>
         </div>
       </div>
       <div className="flex flex-wrap justify-between gap-2 px-4 py-5 font-mono text-[0.65rem] tracking-[0.2em] text-white/60 uppercase sm:px-8 sm:text-xs">

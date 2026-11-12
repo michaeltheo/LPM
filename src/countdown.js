@@ -15,5 +15,5 @@ export function timeLeft(now, target = PARTY_START) {
   }
 }
 
-// when guests can see and add photos; open early for now, set to PARTY_START to lock it until the night
-export const PHOTOS_OPEN = Date.parse('2026-11-10T00:00:00+02:00')
+// when guests can see and add photos
+export const PHOTOS_OPEN = PARTY_START
